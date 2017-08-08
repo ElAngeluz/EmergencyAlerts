@@ -60,8 +60,11 @@ namespace EmergencyApp
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f050000
-			public const int MyButton = 2131034112;
+			// aapt resource value: 0x7f060000
+			public const int MyButton = 2131099648;
+			
+			// aapt resource value: 0x7f060001
+			public const int action_search = 2131099649;
 			
 			static Id()
 			{
@@ -85,6 +88,22 @@ namespace EmergencyApp
 			}
 			
 			private Layout()
+			{
+			}
+		}
+		
+		public partial class Menu
+		{
+			
+			// aapt resource value: 0x7f050000
+			public const int menu = 2131034112;
+			
+			static Menu()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Menu()
 			{
 			}
 		}
