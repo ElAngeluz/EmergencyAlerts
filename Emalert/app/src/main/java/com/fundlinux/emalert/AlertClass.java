@@ -57,11 +57,13 @@ public class AlertClass {
         this.sugerencia = sugerencias;
     }
 
-    public List<AlertClass> CrearLista(){
+    public static List<AlertClass> CrearLista(){
         List<AlertClass> lista = new ArrayList<AlertClass>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             lista.add(new AlertClass(1,TipoAlerta.EMERGENCIA,sdf.parse("08/08/2017"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
+            lista.add(new AlertClass(2,TipoAlerta.ALERTA,sdf.parse("08/08/2017"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
+            lista.add(new AlertClass(3,TipoAlerta.INFORMACION,sdf.parse("08/08/2017"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
