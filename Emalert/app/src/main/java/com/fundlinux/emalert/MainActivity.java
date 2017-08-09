@@ -1,8 +1,12 @@
 package com.fundlinux.emalert;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +17,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.fundlinux.emalert.Activities.AlertFragment;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AlertFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +42,6 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        //drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -80,20 +85,37 @@ public class MainActivity extends AppCompatActivity
 
         if (item.getItemId() == R.id.nav_camera) {
             // Handle the camera action
+            //displayFragment(new AlertFragment(), "Test");
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.container_body, new AlertFragment());
+            ft.commit();
         } else if (item.getItemId() == R.id.nav_gallery) {
 
         } else if (item.getItemId() == R.id.nav_slideshow) {
-
-        } else if (item.getItemId() == R.id.nav_manage) {
-
-        } else if (item.getItemId() == R.id.nav_share) {
-
-        } else if (item.getItemId() == R.id.nav_send) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void displayFragment(Fragment fragment, String title){
+
+        if (fragment != null){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.AlertFragment, fragment);
+            fragmentTransaction.commit();
+
+            // Set Toolbar Title
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        
     }
 }

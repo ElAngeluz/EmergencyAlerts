@@ -8,4 +8,9 @@
     tools:context="com.fundlinux.emalert.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <FrameLayout
+        android:id="@+id/container_body"
+        android:layout_width="368dp"
+        android:layout_height="495dp" />
+
 </android.support.constraint.ConstraintLayout>

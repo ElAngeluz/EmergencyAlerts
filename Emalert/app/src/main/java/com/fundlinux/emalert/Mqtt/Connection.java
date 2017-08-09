@@ -374,7 +374,6 @@ public class Connection {
                 } catch (PersistenceException pe){
                     throw new MqttException(pe);
                 }
-
             }
         }
 
