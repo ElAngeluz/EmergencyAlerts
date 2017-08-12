@@ -18,9 +18,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fundlinux.emalert.Activities.AlertFragment;
+import com.fundlinux.emalert.Activities.ItemFragment;
+import com.fundlinux.emalert.Activities.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AlertFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AlertFragment.OnFragmentInteractionListener, ItemFragment.OnListFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,11 +89,9 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             //displayFragment(new AlertFragment(), "Test");
 
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.container_body, new AlertFragment());
-            ft.commit();
+            displayFragment(new AlertFragment(), "Alerta");
         } else if (item.getItemId() == R.id.nav_gallery) {
-
+            displayFragment(new ItemFragment(), "Historial");
         } else if (item.getItemId() == R.id.nav_slideshow) {
 
         }
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
         if (fragment != null){
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.AlertFragment, fragment);
+            fragmentTransaction.replace(R.id.container_body, fragment);
             fragmentTransaction.commit();
 
             // Set Toolbar Title
@@ -116,6 +116,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }
