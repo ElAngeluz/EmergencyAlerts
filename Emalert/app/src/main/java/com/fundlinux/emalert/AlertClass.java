@@ -1,5 +1,6 @@
 package com.fundlinux.emalert;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +17,17 @@ public class AlertClass {
     private Date fechaAlerta;
     private String mensaje;
     private String sugerencia;
+    public static List<AlertClass> lista = new ArrayList<>();
+
+    public String getSugerencia() {
+        return sugerencia;
+    }
+
+    public void setSugerencia(String sugerencia) {
+        this.sugerencia = sugerencia;
+    }
+
+
 
     public int getId() {
         return id;
@@ -49,24 +61,46 @@ public class AlertClass {
         this.mensaje = mensaje;
     }
 
-    public AlertClass(int id, TipoAlerta tipoAlerta, Date fechaAlerta, String mensaje, String sugerencias) {
-        this.id = id;
+    public AlertClass(TipoAlerta tipoAlerta, Date fechaAlerta, String mensaje, String sugerencias) {
+        this.id = LastIndex();
         this.tipoAlerta = tipoAlerta;
         this.fechaAlerta = fechaAlerta;
         this.mensaje = mensaje;
         this.sugerencia = sugerencias;
     }
 
-    public static List<AlertClass> CrearLista(){
-        List<AlertClass> lista = new ArrayList<AlertClass>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            lista.add(new AlertClass(1,TipoAlerta.EMERGENCIA,sdf.parse("08/08/2017"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
-            lista.add(new AlertClass(2,TipoAlerta.ALERTA,sdf.parse("08/08/2017"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
-            lista.add(new AlertClass(3,TipoAlerta.INFORMACION,sdf.parse("08/08/2017"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
-        } catch (ParseException e) {
-            e.printStackTrace();
+    private int LastIndex(){
+        return lista.size() +1;
+    }
+
+    public static List<AlertClass> Lista(){
+        if (lista.isEmpty()){
+            DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            try {
+                lista.add(new AlertClass(TipoAlerta.EMERGENCIA,sdf.parse("2017/08/08"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
+                lista.add(new AlertClass(TipoAlerta.ALERTA,sdf.parse("2017/08/08"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
+                lista.add(new AlertClass(TipoAlerta.INFORMACION,sdf.parse("2017/08/08"),"nuevo terremoto de 5.6","Buscar un punto de ayuda cercano"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return lista;
         }
         return lista;
+    }
+
+    public static List<AlertClass> UpdateList(AlertClass _item){
+        lista.add(_item );
+        return lista;
+    }
+
+    public static List<AlertClass> FilteresList (TipoAlerta _tipo){
+        List<AlertClass> filter = new ArrayList<>();
+        for (int i= 0; i < lista.size(); i++){
+            if (lista.get(i).getTipoAlerta() == _tipo){
+                filter.add(lista.get(i));
+            }
+        }
+
+        return filter;
     }
 }

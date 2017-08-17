@@ -22,9 +22,30 @@ import com.fundlinux.emalert.Activities.AlertFragment;
 import com.fundlinux.emalert.Activities.ItemFragment;
 import com.fundlinux.emalert.Activities.dummy.DummyContent;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AlertFragment.OnFragmentInteractionListener, ItemFragment.OnListFragmentInteractionListener {
 
+    MqttAndroidClient mqttAndroidClient;
+    MqttConnectOptions mqttConnectOptions;
+
+    private static final String USERNAME = "phone";
+    private final String PASSWORD = "kRB2nGhRuDzm";
+    final String BROKER = "tcp://m12.cloudmqtt.com:17051";
+
+    final String _EMERGENCIA = "/emergencia";
+    final String _ALERTA = "/alerta";
+    final String _INFORMACION = "/informacion";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +71,41 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        final String clientId = MqttClient.generateClientId();
+        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), BROKER, clientId);
+
+        mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setAutomaticReconnect(true);
+        mqttConnectOptions.setCleanSession(false);
+        mqttConnectOptions.setUserName(USERNAME);
+        mqttConnectOptions.setPassword(PASSWORD.toCharArray());
+
+        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String Broker) {
+                addToHistory("reconexion");
+                if (reconnect) {
+                    subscribeToTopic(_EMERGENCIA);
+                }
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+                addToHistory(cause.toString());
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                addToHistory(topic+message);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+
+        });
     }
 
     @Override
@@ -62,6 +118,44 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void subscribeToTopic( final String subscriptionTopic){
+        mqttAndroidClient.subscribe(subscriptionTopic, 0, null, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                addToHistory("Subscribe to: " + subscriptionTopic);
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                addToHistory("fail subscribe to: " + subscriptionTopic);
+            }
+        });
+
+    }
+
+    public void unSubscribeToTopic (final String unSubscriptionTopic){
+        mqttAndroidClient.unsubscribe(unSubscriptionTopic, null, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                addToHistory("Unsubscribe to: "+ unSubscriptionTopic);
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+
+            }
+        });
+    }
+
+    public void publishMessage(final String TOPIC, final String publishMessage){
+        MqttMessage message = new MqttMessage();
+        message.setPayload(publishMessage.getBytes());
+        mqttAndroidClient.publish(TOPIC, message);
+        if(!mqttAndroidClient.isConnected()){
+            //code for no connected
+            addToHistory("fail to Connected");
+        }
+    }
 
     private void addToHistory(String mainText){
         //System.out.println("LOG: " + mainText);
@@ -93,6 +187,25 @@ public class MainActivity extends AppCompatActivity
 
     private void conectar() {
         addToHistory("Connecting to ");
+        mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
+                disconnectedBufferOptions.setBufferEnabled(true);
+                disconnectedBufferOptions.setBufferSize(100);
+                disconnectedBufferOptions.setPersistBuffer(false);
+                disconnectedBufferOptions.setDeleteOldestMessages(false);
+                mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+
+                publishMessage(_EMERGENCIA,"holaapp");
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+
+            }
+        });
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -131,7 +244,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(AlertClass item) {
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
     }
 }
