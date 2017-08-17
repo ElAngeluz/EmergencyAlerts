@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.fundlinux.emalert.AlertClass;
 import com.fundlinux.emalert.R;
-import com.fundlinux.emalert.Activities.dummy.DummyContent;
+import com.fundlinux.emalert.TipoAlerta;
 
 import java.util.List;
 
@@ -27,8 +27,10 @@ public class ItemFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    public static final String ARG_TIPO_ALERTA = "tipo-alerta";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private TipoAlerta tipoAlerta;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -40,12 +42,34 @@ public class ItemFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemFragment newInstance(int columnCount) {
+    /*public static ItemFragment newInstance(int columnCount) {
         ItemFragment fragment = new ItemFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
+    }*/
+
+    public static ItemFragment newInstance(String _tipo){
+        ItemFragment fragment = new ItemFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TIPO_ALERTA, _tipo);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    private TipoAlerta getTipoAlerta(String _tipo)
+    {
+        if (TipoAlerta.EMERGENCIA.toString().equalsIgnoreCase(_tipo)){
+            return TipoAlerta.EMERGENCIA;
+        }
+        if (TipoAlerta.ALERTA.toString().equalsIgnoreCase(_tipo)){
+            return TipoAlerta.ALERTA;
+        }
+        if (TipoAlerta.INFORMACION.toString().equalsIgnoreCase(_tipo)){
+            return TipoAlerta.INFORMACION;
+        }
+        return TipoAlerta.TODAS;
     }
 
     @Override
@@ -53,7 +77,8 @@ public class ItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            //mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            tipoAlerta = getTipoAlerta(getArguments().getString(ARG_TIPO_ALERTA));
         }
     }
 
@@ -71,8 +96,7 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            List<AlertClass>l = DummyContent.ITEMS;
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(AlertClass.FilteresList(tipoAlerta), mListener));
         }
         return view;
     }

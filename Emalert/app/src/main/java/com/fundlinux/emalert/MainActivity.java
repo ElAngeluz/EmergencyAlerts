@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.fundlinux.emalert.Activities.AlertFragment;
 import com.fundlinux.emalert.Activities.ItemFragment;
-import com.fundlinux.emalert.Activities.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AlertFragment.OnFragmentInteractionListener, ItemFragment.OnListFragmentInteractionListener {
@@ -84,7 +83,6 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (item.getItemId() == R.id.action_settings) {
             conectar();
-            //subscribeToTopic(_EMERGENCIA);
             return true;
         }
 
@@ -100,11 +98,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.nav_camera) {
-            displayFragment(new AlertFragment(), "Alerta");
+            displayFragment(new ItemFragment(), "Historial Emergencias",TipoAlerta.EMERGENCIA);
         } else if (item.getItemId() == R.id.nav_gallery) {
-            displayFragment(new ItemFragment(), "Historial");
+            displayFragment(new ItemFragment(), "Historial Alertas",TipoAlerta.ALERTA);
         } else if (item.getItemId() == R.id.nav_slideshow) {
-
+            displayFragment(new ItemFragment(), "Todas",TipoAlerta.TODAS);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -112,11 +110,17 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void displayFragment(Fragment fragment, String title){
+    private void displayFragment(Fragment fragment, String title, TipoAlerta _tipo){
 
         if (fragment != null){
             FragmentManager fragmentManager = getSupportFragmentManager();
+            if (_tipo != null) {
+                Bundle args = new Bundle();
+                args.putString(ItemFragment.ARG_TIPO_ALERTA, _tipo.toString());
+                fragment.setArguments(args);
+            }
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
             fragmentTransaction.replace(R.id.container_body, fragment);
             fragmentTransaction.commit();
 

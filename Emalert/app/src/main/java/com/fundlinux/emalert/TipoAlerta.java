@@ -7,5 +7,6 @@ package com.fundlinux.emalert;
 public enum TipoAlerta {
     EMERGENCIA,
     ALERTA,
-    INFORMACION
+    INFORMACION,
+    TODAS
 }
