@@ -21,9 +21,29 @@ import android.widget.Toast;
 import com.fundlinux.emalert.Activities.AlertFragment;
 import com.fundlinux.emalert.Activities.ItemFragment;
 
+import java.io.IOException;
+import java.util.List;
+
+import io.particle.android.sdk.cloud.ApiFactory;
+import io.particle.android.sdk.cloud.ParticleCloud;
+import io.particle.android.sdk.cloud.ParticleCloudException;
+import io.particle.android.sdk.cloud.ParticleCloudSDK;
+import io.particle.android.sdk.cloud.ParticleDevice;
+import io.particle.android.sdk.utils.Async;
+import io.particle.android.sdk.utils.Toaster;
+
+
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AlertFragment.OnFragmentInteractionListener, ItemFragment.OnListFragmentInteractionListener {
 
+    private ParticleCloud sparkCloud;
+    private Async.AsyncApiWorker<ParticleCloud, ParticleDevice> loginTask = null;
+    List<ParticleDevice> devices;
+    public static final String EXTRA_DEVICE_ID = "deviceID";
+    ParticleDevice device;
+    private String email = "correo";
+    private String password = "contraseña";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +56,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Notificacion Entendida", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -49,6 +69,28 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //sparkCloud = ParticleCloudSDK.getCloud();
+/*
+        loginTask = Async.executeAsync(sparkCloud, new Async.ApiWork<ParticleCloud, ParticleDevice>() {
+
+            @Override
+            public ParticleDevice callApi(ParticleCloud particleCloud) throws ParticleCloudException, IOException {
+                sparkCloud.logIn(email, password);
+                return null;
+            }
+
+            @Override
+            public void onSuccess(ParticleDevice particleDevice) {
+                device = particleDevice;
+            }
+
+            @Override
+            public void onFailure(ParticleCloudException exception) {
+
+            }
+        });*/
     }
 
     @Override
